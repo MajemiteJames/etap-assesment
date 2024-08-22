@@ -1,26 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { CreateRankingDto } from './dto/create-ranking.dto';
-import { UpdateRankingDto } from './dto/update-ranking.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Ranking } from './entities/ranking.entity';
 
 @Injectable()
 export class RankingService {
-  create(createRankingDto: CreateRankingDto) {
-    return 'This action adds a new ranking';
-  }
+  constructor(
+    @InjectRepository(Ranking)
+    private rankingRepository: Repository<Ranking>,
+  ) {}
 
-  findAll() {
-    return `This action returns all ranking`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} ranking`;
-  }
-
-  update(id: number, updateRankingDto: UpdateRankingDto) {
-    return `This action updates a #${id} ranking`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} ranking`;
+  getRankingForSubject(subjectId: string) {
+    return this.rankingRepository.find({
+      where: { subject: { id: subjectId } },
+      order: { rank: 'ASC' },
+    });
   }
 }
