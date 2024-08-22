@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCompletionDto } from './dto/create-completion.dto';
-import { UpdateCompletionDto } from './dto/update-completion.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Completion } from './entities/completion.entity';
+import { User } from 'src/user/entities/user.entity';
+import { Topic } from 'src/topic/entities/topic.entity';
 
 @Injectable()
 export class CompletionService {
-  create(createCompletionDto: CreateCompletionDto) {
-    return 'This action adds a new completion';
+  constructor(
+    @InjectRepository(Completion)
+    private completionRepository: Repository<Completion>,
+    @InjectRepository(Topic)
+    private readonly topicRepository: Repository<Topic>,
+  ) {}
+
+  async completeTopic(user: User, topicId: string) {
+    // Fetch the Topic entity by topicId
+    const topic = await this.topicRepository.findOne({
+      where: { id: topicId },
+    });
+
+    if (!topic) {
+      throw new Error('Topic not found');
+    }
+
+    // Create and save the completion record
+    const completion = this.completionRepository.create({ user, topic });
+    return this.completionRepository.save(completion);
   }
 
-  findAll() {
-    return `This action returns all completion`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} completion`;
-  }
-
-  update(id: number, updateCompletionDto: UpdateCompletionDto) {
-    return `This action updates a #${id} completion`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} completion`;
+  getUserCompletion(userId: string) {
+    return this.completionRepository.find({
+      where: { user: { id: userId } },
+      relations: ['topic'],
+    });
   }
 }
