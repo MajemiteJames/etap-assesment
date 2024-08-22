@@ -8,6 +8,7 @@ import { SubjectModule } from './subject/subject.module';
 import { TopicModule } from './topic/topic.module';
 import { CompletionModule } from './completion/completion.module';
 import { RankingModule } from './ranking/ranking.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { RankingModule } from './ranking/ranking.module';
     TopicModule,
     CompletionModule,
     RankingModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
