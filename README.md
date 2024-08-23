@@ -76,6 +76,10 @@ $ npm run start:dev
 ```
 The server will start on <http://localhost:3000>.
 
+## Documentation
+
+- <http://localhost:3000/api>.
+
 ## Running with Docker
 
 - Build the Docker Containers:
