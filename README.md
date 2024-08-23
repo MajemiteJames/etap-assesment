@@ -1,73 +1,224 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+## Learning Platform API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This API is designed to manage subjects, topics, and learner progress. It allows users to view subjects and topics, track topic completion, and rank learners based on their progress. The API is built with NestJS, TypeORM, and PostgreSQL, and is fully Dockerized for ease of testing.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Table of Contents
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Installation
+- Environment Configuration
+- Running the Application
+- API Endpoints
+- Docker Configuration
+- Assumptions
 
 ## Installation
 
+Prerequisites
+
+  - Node.js (v14+)
+  - npm (v6+)
+  - Docker and Docker Compose
+
+## Clone the Repository
+
 ```bash
-$ npm install
+$ git clone https://github.com/MajemiteJames/etap-assesment.git
+$ cd learning-platform-api
 ```
 
-## Running the app
+## Installation of Dependencies
 
 ```bash
-# development
-$ npm run start
+npm install
+```
 
-# watch mode
+## Environment Configuration
+
+Create a .env file in the root directory and configure it with your environment variables. Here's an example:
+
+```bash
+    # Application
+    PORT=3000
+    NODE_ENV=development
+
+    # Database
+    DB_HOST=localhost
+    DB_PORT=5432
+    DB_USER=postgres
+    DB_PASSWORD=password
+    DB_NAME=learning_platform
+
+    # JWT
+    JWT_SECRET=your_secret_key
+
+    # Docker
+    DB_HOST=docker_db
+```
+Ensure you replace DB_USER, DB_PASSWORD, and DB_NAME with your actual PostgreSQL credentials.
+
+
+## Running the Application
+
+Running Locally
+
+  - Start PostgreSQL: Ensure your PostgreSQL server is running and matches the configuration in your .env file.
+  - Run Database Migrations: To set up the database schema, run:
+
+```bash
+$ npm run typeorm migration:run
+```
+
+- Start the Server:
+
+```bash
 $ npm run start:dev
 
-# production mode
-$ npm run start:prod
 ```
+The server will start on <http://localhost:3000>.
 
-## Test
+## Running with Docker
+
+- Build the Docker Containers:
 
 ```bash
-# unit tests
-$ npm run test
+docker-compose build
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
 ```
 
-## Support
+- Run the Docker Containers:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+docker-compose up
 
-## Stay in touch
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+The application will be available at <http://localhost:3000>.
 
-## License
+## API Endpoints
 
-Nest is [MIT licensed](LICENSE).
+Authentication
+
+- Sign Up
+
+    - URL: /auth/signup
+    - Method: POST
+    - Body:
+
+```bash
+    {
+      "email": "user@example.com",
+      "password": "strongpassword",
+      "role": "LEARNER"
+    }
+```
+    - Description: Creates a new user account.
+
+- Login
+
+    - URL: /auth/login
+    - Method: POST
+    - Body:
+
+```bash
+    {
+      "email": "user@example.com",
+      "password": "strongpassword"
+    }
+```
+    - Description: Authenticates a user and returns a JWT.
+
+## Subjects
+
+- Get All Subjects
+
+    - URL: /subjects
+    - Method: GET
+    - Description: Returns a list of all available subjects.
+
+- Get Topics by Subject
+
+    - URL: /subjects/:subjectId/topics
+    - Method: GET
+    - Description: Returns a list of topics for a specific subject.
+
+## Topics
+
+- Get Topic Details
+
+    - URL: /topics/:topicId
+    - Method: GET
+    - Description: Returns details about a specific topic, including the title, video, and description.
+
+## Mark Topic as Complete
+
+    - URL: /topics/complete/:topicId
+    - Method: POST
+    - Description: Marks a topic as complete for the logged-in user.
+
+## Learners
+
+- Get Learner Rankings for a Subject
+
+    - URL: /subjects/:subjectId/rankings
+    - Method: GET
+    - Description: Returns a list of learners ranked by their completion rate for a specific subject.
+
+## Docker Configuration
+
+Docker Compose
+
+The docker-compose.yml file is used to configure and run the application with Docker. Here’s an overview:
+
+```bash
+version: '3'
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - db
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: learning_platform
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+volumes:
+  db_data:
+```
+
+## Running Docker
+
+  - Build the Docker Containers:
+
+```bash
+docker-compose build
+```
+
+- Run the Docker Containers:
+
+```bash
+docker-compose up
+```
+
+- Stopping Docker Containers:
+
+```bash
+docker-compose down
+```
+
+## Assumptions
+
+- The application assumes that users have unique email addresses.
+- The completion tracking is based on the assumption that a user can complete a topic only once.
+- The ranking is based on the completion rate, which is the number of completed topics divided by the total topics in a subject.
+
